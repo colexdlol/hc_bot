@@ -1,0 +1,1786 @@
+local HttpService = game:GetService("HttpService")
+local lastTimestamp = 0
+
+_G.Type = 1
+
+game:GetService('Players').LocalPlayer.Idled:Connect(function()
+    game:GetService("VirtualUser"):CaptureController()
+    game:GetService("VirtualUser"):ClickButton2(Vector2.new(0, 0))
+end)
+
+if table.find(_G.Whitelist, game:GetService('Players').LocalPlayer.Name) then
+    local Mod_IDs = {
+    8650248838,
+    8126737616,
+    347856565,
+    8440669905,
+    3816352913,
+    16217888,
+	3677938983,
+	417306513,
+	10832126242,
+	70533,
+	10366052412,
+	7908860934,
+	10408189200,
+	1581828320,
+	10605208442,
+	8117519883,
+	8419861509,
+	556480684,
+	4095984142,
+	10294183317,
+	9702735305,
+	339498344,
+	1954584467,
+	10764687718,
+	5815259824,
+	3701423181,
+	8811129148,
+	9622317500,
+	10601711306,
+	1860328,
+	3446550173,
+	9737580286,
+	1341435676,
+	5019169384,
+	1037465619,
+	9474039627,
+	4649864403,
+	2449685,
+	3730120158,
+	2987673769,
+	9831818501,
+	1660029941,
+	1541747930,
+	51796,
+	75170730,
+	8879652417,
+	7053368,
+	83041,
+	656570,
+	9298990541,
+	9783139981,
+	1027987,
+	7365466544,
+	134563,
+	59737370,
+	618970534,
+	9442536613,
+	833132506,
+	2343428363,
+	8879715673,
+	10047312232,
+	132625,
+	846761832,
+	2555761663,
+	8812431342,
+	36786456,
+	5654642,
+	9817598598,
+	7415847553,
+	2388584611,
+	750087,
+	3376509853,
+	406152511,
+	279773,
+	7040497371,
+	149759419,
+	25879971,
+	109608,
+	9181630306,
+	3599927362,
+	29242182,
+	21756399,
+	8457757466,
+	3525918505,
+	5036683208,
+	7225903,
+	9506887465,
+	4544888724,
+	5089232823,
+	9257744969,
+	8142054648,
+	68142,
+	9517394489,
+	2294188446,
+	8280673725,
+	7438567227,
+	29761878,
+	1106320934,
+	9511790450,
+	7411200326,
+	2578972524,
+	7197552531,
+	3576067905,
+	582370,
+	682887852,
+	393865057,
+	137723571,
+	4891411890,
+	189713559,
+	3924496689,
+	2357168230,
+	8390626336,
+	16132908,
+	4337893156,
+	1433699977,
+	161130620,
+	2862482,
+	60265,
+	7412920468,
+	935864306,
+	7411162962,
+	1226086717,
+	2050161622,
+	2415886442,
+	9013851604,
+	5042090443,
+	878674194,
+    9620110779
+}
+
+local function ModChecker(Plr)
+    if Plr:IsInGroup(34199407) == true or Plr:IsInGroup(339846382) == true then
+        return true
+    end
+
+    for i,v in ipairs(Mod_IDs) do
+        if v == Plr.UserId then
+            return true
+        end
+    end
+
+    return false
+end
+
+task.spawn(function()
+    for i,Plr in next, game:GetService('Players'):GetPlayers() do
+        if Plr ~= Player then
+            if ModChecker(Plr) == true then
+				game:GetService("StarterGui"):SetCore("SendNotification", {
+    				Title = "Mod Notifier",
+    				Text = 'Moderator has joined : '..Plr.Name,
+    				Duration = 15
+				})
+                local Sound = Instance.new('Sound', game:GetService('SoundService')); Sound.SoundId = 'rbxassetid://1570162306'; Sound.Volume = 5; Sound.RollOffMode = Enum.RollOffMode.Linear; Sound.RollOffMaxDistance = 100000
+                Sound:Play()
+                game.Debris:AddItem(Sound, 1)
+            end
+        end
+    end
+    return
+end)
+
+game:GetService('Players').PlayerAdded:Connect(function(Plr)
+    if ModChecker(Plr) == true then
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+    		Title = "Mod Notifier",
+    		Text = 'Moderator has joined : '..Plr.Name,
+    		Duration = 15
+		})
+        local Sound = Instance.new('Sound', game:GetService('SoundService')); Sound.SoundId = 'rbxassetid://1570162306'; Sound.Volume = 5; Sound.RollOffMode = Enum.RollOffMode.Linear; Sound.RollOffMaxDistance = 100000
+        Sound:Play()
+        game.Debris:AddItem(Sound, 1)
+    end
+end)
+    
+    return 
+end
+
+if game:GetService('Players').LocalPlayer.Name == _G.Alt1 then
+    _G.Type = 1
+elseif game:GetService('Players').LocalPlayer.Name == _G.Alt2 then
+    _G.Type = 2
+elseif game:GetService('Players').LocalPlayer.Name == _G.Alt3 then
+    _G.Type = 3
+elseif game:GetService('Players').LocalPlayer.Name == _G.Alt4 then
+    _G.Type = 4
+end
+
+_G.Exit = false
+
+local Player = game:GetService('Players').LocalPlayer
+local LesserWhitelist = {}
+local Master = nil
+local Busy = false
+local Method = 'Gun'
+local AutoTargets = {}
+local Autoing = false
+local Monitoring = {}
+local KnockCD = false
+local KA = false
+
+local BlacklistedAnims = {
+    'rbxassetid://9834705027',
+    'rbxassetid://11362394593',
+    'rbxassetid://11362646824',
+    'rbxassetid://9836526078',
+    'rbxassetid://15862130681',
+    'rbxassetid://11362608701',
+}
+
+local X = 1.8
+local Z = 2.25
+
+if _G.Type == 3 or _G.Type == 4 then
+    X = 3.6
+    Z = 4.5
+end
+
+local OldX = X
+local OldZ = Z
+
+-- Summon
+local SummonPause = false
+local Summoned = false
+local Anim = Instance.new('Animation')
+Anim.AnimationId = 'rbxassetid://107817714498111'
+local Track = nil
+
+-- Fuck
+local Fucking = false
+local F_Anim = Instance.new('Animation')
+F_Anim.AnimationId = 'rbxassetid://114277921088926'
+local F_Track = nil
+
+-- Suck
+local Sucking = false
+local S_Anim = Instance.new('Animation')
+S_Anim.AnimationId = 'rbxassetid://126557734418320'
+local S_Track = nil
+
+-- Evolve
+local Evolved = false
+local E_Anim = Instance.new('Animation')
+E_Anim.AnimationId = 'rbxassetid://70883871260184'
+local E_Track = nil
+
+local function CheckKnocked(Target)
+	if Target == nil then return true end
+    if not Target:FindFirstChild('Humanoid') then return true end
+    if Target.Humanoid.Health <= 0 then return true end
+    if Target:FindFirstChild('BodyEffects') == nil or Target:FindFirstChild('BodyEffects'):FindFirstChild('K.O') == nil then return false end
+
+	if Target.BodyEffects["K.O"].Value == false and Target:FindFirstChild('GRABBING_CONSTRAINT') == nil then
+		return false
+	else
+		return true
+	end
+end
+
+local function CheckDeath(Target)
+	if Target == nil or not Target:FindFirstChild('Humanoid') then return true end
+    if Target.Humanoid.Health <= 0 then return true end
+    if Target:FindFirstChild('BodyEffects') == nil then return false end
+
+	if Target.BodyEffects:FindFirstChild('Dead') and Target.BodyEffects["Dead"].Value ~= true then
+		return false
+	else
+		return true
+    end
+end
+
+local function add_AND_remove_Limbs()
+    local Character = Player.Character
+    if not Character:FindFirstChild('LeftHand') and game:GetService('Lighting'):FindFirstChild('LeftHand') then
+        for i,v in next, game:GetService('Lighting'):GetChildren() do
+            if v:IsA('MeshPart') then
+                v.Parent = Character
+            end
+        end
+    else
+        Character.LeftUpperArm.Parent = game:GetService('Lighting')
+        Character.LeftLowerArm.Parent = game:GetService('Lighting')
+        Character.LeftHand.Parent = game:GetService('Lighting')
+
+        Character.RightUpperLeg.Parent = game:GetService('Lighting')
+        Character.RightLowerLeg.Parent = game:GetService('Lighting')
+        Character.RightFoot.Parent = game:GetService('Lighting')
+
+        Character.LeftUpperLeg.Parent = game:GetService('Lighting')
+        Character.LeftLowerLeg.Parent = game:GetService('Lighting')
+        Character.LeftFoot.Parent = game:GetService('Lighting')
+    end
+end
+
+local function ForceHit(Target)
+	if Target == nil or CheckKnocked(Player.Character) == true then return end
+
+    local Tool = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool")
+
+    if not Tool then return end
+
+    if Tool:FindFirstChild('Script') and Tool:FindFirstChild('Script'):FindFirstChild('Ammo') and Tool:FindFirstChild('Script'):FindFirstChild('Ammo'):FindFirstChild('CLIENT') then
+        if Tool.Script.Ammo.CLIENT.Value == 0 then
+            return
+        end
+    end
+
+	if CheckKnocked(Target) == false then
+		task.spawn(function()
+		    local Target = Target:WaitForChild("SpecialParts"):WaitForChild("Head")
+
+			local args = {  
+                [1] = "Shoot",
+                [2] = {
+                    [1] = {
+                        [1] = {
+                            Normal = Target.Position,
+                            Instance = Target,
+                            Position = Target.Position
+                        },
+                        [2] = {
+                            Normal = Target.Position,
+                            Instance = Target,
+                            Position = Target.Position
+                        },
+                        [3] = {
+                            Normal = Target.Position,
+                            Instance = Target,
+                            Position = Target.Position
+                        },
+                        [4] = {
+                            Normal = Target.Position,
+                            Instance = Target,
+                            Position = Target.Position
+                        },
+                        [5] = {
+                            Normal = Target.Position,
+                            Instance = Target,
+                            Position = Target.Position
+                        }
+                    },
+                    [2] = {
+                        [1] = {
+                            thePart = Target,
+                            theOffset = Vector3.new(0, 0, 0)
+                        },
+                        [2] = {
+                            thePart = Target,
+                            theOffset = Vector3.new(0, 0, 0)
+                        },
+                        [3] = {
+                            thePart = Target,
+                            theOffset = Vector3.new(0, 0, 0)
+                        },
+                        [4] = {
+                            thePart = Target,
+                            theOffset = Vector3.new(0, 0, 0)
+                        },
+                        [5] = {
+                            thePart = Target,
+                            theOffset = Vector3.new(0, 0, 0)
+                        }
+                    },
+                    [3] = Player.Character.HumanoidRootPart.Position,
+                    [4] = Player.Character.HumanoidRootPart.Position,
+                    [5] = workspace:GetServerTimeNow()
+                }
+            }
+                    
+			game:GetService("ReplicatedStorage").MainEvent:FireServer(unpack(args))
+            task.wait(.1)
+            local Ammo, ClientAmmo = Player.Character:FindFirstChildOfClass('Tool').Script.Ammo, Player.Character:FindFirstChildOfClass('Tool').Script.Ammo.CLIENT
+            ClientAmmo.Value = Ammo.Value
+			return
+		end)
+	end
+end
+
+local function Knock(Target)
+    task.spawn(function()
+        if Player.Character:FindFirstChild('[Knife]') then Player.Character:FindFirstChild('[Knife]').Parent = Player.Backpack end
+        --sethiddenproperty(Player.Character.HumanoidRootPart, "PhysicsRepRootPart", nil)
+        local TargetHRP = Target.Character:FindFirstChild('HumanoidRootPart')
+        local old_CFrame = Player.Character.HumanoidRootPart.CFrame
+
+        if not Player.Character:FindFirstChild('[DoubleBarrel]') then Player.Backpack:FindFirstChild('[DoubleBarrel]').Parent = Player.Character end
+
+        task.wait()
+
+        Player.Character.HumanoidRootPart.CFrame = TargetHRP.CFrame * CFrame.new(0,12.5,0) * CFrame.Angles(math.rad(-90), 0, 0)
+
+        task.wait()
+
+        Player.Character.HumanoidRootPart.CFrame = TargetHRP.CFrame * CFrame.new(0,12.5,0) * CFrame.Angles(math.rad(-90), 0, 0)
+
+        task.wait(.3)
+
+        local RealTarget = Target.Character
+
+        if Target.Character:FindFirstChild('GRABBING_CONSTRAINT') then
+            RealTarget = Target.Character:FindFirstChild('GRABBING_CONSTRAINT').Part1.Parent
+        end
+
+        ForceHit(RealTarget)
+
+        task.wait(.35)
+
+        Player.Character.HumanoidRootPart.CFrame = old_CFrame
+    end)
+end
+
+local TargetOrder = {}
+local CurrentIndex = 0
+local CurrentTarget = nil
+local Switch_CD = false
+
+local function updateCurrentTarget()
+    TargetOrder = AutoTargets
+    --Connection_OldPos = Player.Character.HumanoidRootPart.CFrame
+
+    if #TargetOrder == 0 or TargetOrder[1] == Player.Name then
+        CurrentTarget = nil
+        return
+    end
+
+    --print('updated')
+
+    local oldTarget = CurrentTarget
+
+    for _ = 1, #TargetOrder do
+        CurrentIndex += 1
+        if CurrentIndex > #TargetOrder then
+            CurrentIndex = 1
+        end
+
+        local Target = game:GetService('Players'):FindFirstChild(TargetOrder[CurrentIndex])
+        if Target then
+            if Target ~= OldTarget then
+                task.spawn(function()
+					Switch_CD = true
+                    task.wait(.75)
+					Switch_CD = false
+                    return
+                end)
+            end
+
+            CurrentTarget = Target
+            return
+        end
+    end
+
+    --CurrentTarget = nil
+end
+
+local function getTarget(arg)
+    if arg == 'me' then
+        return Player
+    end
+
+    for _, v in pairs(game:GetService('Players'):GetPlayers()) do
+        if v.Name:lower() == arg then
+            return v
+        end
+    end
+
+    local input = string.lower(arg)
+
+    local bestPlayer = nil
+    local bestPos = math.huge
+
+    for _, v in pairs(game:GetService('Players'):GetPlayers()) do
+        local name = string.lower(v.DisplayName)
+        local pos = string.find(name, input, 1, true)
+
+        if pos and pos < bestPos and v ~= Player then
+            bestPos = pos
+            bestPlayer = v
+        end
+    end
+
+    if bestPlayer then
+        return bestPlayer
+    end
+
+    for _, v in pairs(game:GetService('Players'):GetPlayers()) do
+        local name = string.lower(v.Name)
+        local pos = string.find(name, input, 1, true)
+
+        if pos and pos < bestPos and v ~= Player then
+            bestPos = pos
+            bestPlayer = v
+        end
+    end
+
+    return bestPlayer
+end
+
+local function receiveMessage(Msg, Chatter)
+    if msg ~= '' then
+        if Chatter == nil then Chatter = game:GetService('Players'):FindFirstChild(_G.Whitelist[1]).Name end
+
+        task.spawn(function()
+            local Split = string.split(Msg, ' ')
+            if Split[1] == nil then return end
+
+            if Split[1]:lower() == _G.Prefix..'teleport' or Split[1]:lower() == _G.Prefix..'tp' then
+                if Split[4] ~= nil and _G.Type == 1 and Split[4] ~= '1' then return end
+                if Split[4] ~= nil and _G.Type == 2 and Split[4] ~= '2' then return end
+                if Split[4] ~= nil and _G.Type == 3 and Split[4] ~= '3' then return end
+                if Split[4] ~= nil and _G.Type == 4 and Split[4] ~= '4' then return end
+            elseif Split[1]:lower() ~= _G.Prefix..'say' and Split[1]:lower() ~= _G.Prefix..'speak' then
+                if Split[3] ~= nil and _G.Type == 1 and Split[3] ~= '1' then return end
+                if Split[3] ~= nil and _G.Type == 2 and Split[3] ~= '2' then return end
+                if Split[3] ~= nil and _G.Type == 3 and Split[3] ~= '3' then return end
+                if Split[3] ~= nil and _G.Type == 4 and Split[3] ~= '4' then return end
+            end
+
+            if Split[1]:lower() == _G.Prefix..'whitelist' and table.find(_G.Whitelist, Chatter) then -- Whitelist
+                local Target = getTarget(Split[2]:lower())
+        
+                if Target then
+                    if not table.find(LesserWhitelist, Target.Name) then
+                        table.insert(LesserWhitelist, Target.Name)
+                    end
+                end
+            elseif Split[1]:lower() == _G.Prefix..'unwhitelist' and table.find(_G.Whitelist, Chatter) then -- Unwhitelist
+                local Target = getTarget(Split[2]:lower())
+
+                if Target then
+                    if table.find(LesserWhitelist, Target.Name) then
+                        for i,v in ipairs(LesserWhitelist) do
+                            if v == Target.Name then
+                                table.remove(LesserWhitelist, i)
+                            end
+                        end
+                    end
+                end
+            elseif Split[1]:lower() == _G.Prefix..'killaura' or Split[1]:lower() == _G.Prefix..'kill_aura' or Split[1]:lower() == _G.Prefix..'ka' then -- Kill Aura
+                if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+        
+                KA = not KA
+        
+                if KA == false then
+                    if Track ~= nil and Summoned == true then
+                        Track:Play()
+                    end
+            
+                    task.wait(.1)
+            
+                    if Master ~= nil and game:GetService('Players'):FindFirstChild(Master.Name) then
+                        if Master.Character ~= nil and Master.Character:FindFirstChild('HumanoidRootPart') and Master.Character:FindFirstChild('HumanoidRootPart').CanTouch == false then
+                            for i,v in next, Master.Character:GetChildren() do
+                                if v:IsA('BasePart') then
+                                    v.CanTouch = true
+                                end
+                            end
+                        end
+                    end
+
+                    task.wait()
+
+                    if Player.Character:FindFirstChild('[Knife]') then Player.Character:FindFirstChild('[Knife]').Parent = Player.Backpack end
+                end
+            elseif Split[1]:lower() == _G.Prefix..'fix' --[[and table.find(_G.Whitelist, Chatter)]] then -- Fix
+                Busy = false
+                PickingUp = false
+                KnockCD = false
+            elseif Split[1]:lower() == _G.Prefix..'switch' or Split[1]:lower() == _G.Prefix..'sw' then -- Switch
+                if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+
+                if Method == 'Gun' then
+                    Method = 'Knife'
+                else
+                    Method = 'Gun'
+                end
+            elseif Split[1]:lower() == _G.Prefix..'o_set' or Split[1]:lower() == _G.Prefix..'os' then -- o_set
+                if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+
+                if _G.Type == 1 or _G.Type == 2 then
+                    if X == 1.8 then
+                        X = 0
+                        if _G.Type == 1 then
+                            Z = -.5
+                        else
+                            Z = .25
+                        end
+                    elseif X == 0 then
+                        if _G.Type == 1 or _G.Type == 2 then
+                            X = 1.8
+                            Z = 2.25
+                        end
+                    end
+                else
+                    if X == 3.6 then
+                        X = 0
+                        if _G.Type == 3 then
+                            Z = -.5
+                        else
+                            Z = .25
+                        end
+                    elseif X == 0 then
+                        if _G.Type == 3 or _G.Type == 4 then
+                            X = 3.6
+                            Z = 4.5
+                        end
+                    end
+                end
+            elseif Split[1]:lower() == _G.Prefix..'f' or Split[1]:lower() == _G.Prefix..'fk' then -- Fuck
+                if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+        
+                Fucking = not Fucking
+        
+                if Fucking == true then
+                    X = 0
+                    Z = 1.5
+                    F_Track = Player.Character.Humanoid:LoadAnimation(F_Anim)
+                    F_Track.Priority = Enum.AnimationPriority.Action4
+                    F_Track:Play()
+                    if S_Track ~= nil then
+                        Sucking = false
+                        S_Track:Stop()
+                    end
+                else
+                    X = OldX
+                    Z = OldZ
+                    F_Track:Stop()
+                end
+            elseif Split[1]:lower() == _G.Prefix..'sk' or Split[1]:lower() == _G.Prefix..'g' then -- Suck
+                if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+        
+                Sucking = not Sucking
+        
+                if Sucking == true then
+                    X = 0
+                    Z = -3.25
+                    S_Track = Player.Character.Humanoid:LoadAnimation(S_Anim)
+                    S_Track.Priority = Enum.AnimationPriority.Action4
+                    S_Track:Play()
+                    if F_Track ~= nil then
+                        Fucking = false
+                        F_Track:Stop()
+                    end
+                else
+                    X = OldX
+                    Z = OldZ
+                    S_Track:Stop()
+                end
+            elseif Split[1]:lower() == _G.Prefix..'summon' or Split[1]:lower() == _G.Prefix..'s' then -- Summon
+                local Target = nil
+
+                if Split[3] ~= nil then
+                    if Split[3] ~= nil and _G.Type == 1 and Split[3] ~= '1' then return end
+                    if Split[3] ~= nil and _G.Type == 2 and Split[3] ~= '2' then return end
+                    if Split[3] ~= nil and _G.Type == 3 and Split[3] ~= '3' then return end
+                    if Split[3] ~= nil and _G.Type == 4 and Split[3] ~= '4' then return end
+
+                    Target = getTarget(Split[2]:lower())
+                else
+                    if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                    if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                    if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                    if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+                end
+
+                --[[if Split[3] == nil and Split[2] ~= nil and Split[2] ~= '1' and Split[2] ~= '2' and Split[2] ~= '3' and Split[2] ~= '4' then
+                    Target = getTarget(Split[2]:lower())
+                end]]
+
+                if Target == nil then
+                    Target = game:GetService('Players'):FindFirstChild(Chatter)
+                end
+
+                Master = Target
+                Track = nil
+                Summoned = true
+
+                if Track == nil then
+                    Track = Player.Character.Humanoid:LoadAnimation(Anim)
+                    --Track.Priority = Enum.AnimationPriority.Action4
+                    Track:Play()
+                end
+            elseif Split[1]:lower() == _G.Prefix..'bye' or Split[1]:lower() == _G.Prefix..'safe' then -- Safe
+                if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+
+                Master = nil
+                if Track ~= nil then
+                    Track:Stop()
+                end
+
+                Track = nil
+                Summoned = false
+
+                task.wait()
+
+                Player.Character.HumanoidRootPart.CFrame = CFrame.new(53.787735, 124.098007, -277.64444, -0.629061103, 6.47420322e-08, -0.77735585, 1.00551745e-07, 1, 1.91526661e-09, 0.77735585, -7.69596653e-08, -0.629061103)
+            elseif Split[1]:lower() == _G.Prefix..'hide' or Split[1]:lower() == _G.Prefix..'ss' then -- Summon Stop
+                if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+
+                Master = nil
+                if Track ~= nil then
+                    Track:Stop()
+                end
+
+                Track = nil
+                Summoned = false
+            elseif Split[1]:lower() == _G.Prefix..'clearall' or Split[1]:lower() == _G.Prefix..'clrall' or Split[1]:lower() == _G.Prefix..'clra' then -- Clear All
+                if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+
+                KA = false
+                Fucking = false
+                Sucking = false
+
+                if F_Track ~= nil then
+                    F_Track:Stop()
+                end
+
+                if S_Track ~= nil then
+                    S_Track:Stop()
+                end
+
+                X = OldX
+                Z = OldZ
+            elseif Split[1]:lower() == _G.Prefix..'say' or Split[1]:lower() == _G.Prefix..'speak' then
+                local startIndex = 2
+                local targetType = tonumber(Split[2])
+
+                if targetType then
+                    if targetType ~= _G.Type then
+                        return
+                    end
+
+                    startIndex = 3
+                end
+
+                local msg = table.concat(Split, ' ', startIndex)
+                if msg == '' then return end
+
+                local RBXGeneral = game:GetService("TextChatService"):WaitForChild("TextChannels"):WaitForChild("RBXGeneral")
+                RBXGeneral:SendAsync(msg)
+            elseif Split[1]:lower() == _G.Prefix..'bring' or Split[1]:lower() == _G.Prefix..'here' then -- Bring
+                local Target = getTarget(Split[2]:lower())
+
+                if Target and Busy == false then
+                    local old_CFrame = Player.Character.HumanoidRootPart.CFrame
+                    local o_time = tick()
+                    Busy = true
+                    SummonPause = true
+                    task.wait(.1)
+                    --sethiddenproperty(Player.Character.HumanoidRootPart, "PhysicsRepRootPart", nil)
+                    local TargetChar = Target.Character
+
+                    if CheckKnocked(Target.Character) == false or Target.Character:FindFirstChild('GRABBING_CONSTRAINT') then
+                        Knock(Target)
+                        task.wait(.7)
+                    end
+
+                    task.wait(.5)
+
+                    for i=0,150,1 do
+                        local orientation = Player.Character.HumanoidRootPart.CFrame - Player.Character.HumanoidRootPart.Position
+                        local newPosition = TargetChar.UpperTorso.Position + Vector3.new(0, 3, 0)
+
+                        Player.Character.HumanoidRootPart.CFrame = orientation + newPosition
+                    end
+
+                    task.wait(.1)
+
+                    local args = {
+                        "Grabbing"
+                    }
+
+                    game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+
+                    task.wait(.35)
+
+                    if not TargetChar:FindFirstChild('GRABBING_CONSTRAINT') and CheckDeath(TargetChar) == false and CheckKnocked(TargetChar) == true then
+                        repeat task.wait(.5)
+                            task.spawn(function()
+                                for i=0,50,1 do
+                                    if not TargetChar:FindFirstChild('GRABBING_CONSTRAINT') then
+                                        local orientation = Player.Character.HumanoidRootPart.CFrame - Player.Character.HumanoidRootPart.Position
+                                        local newPosition = TargetChar.UpperTorso.Position + Vector3.new(0, 3, 0)
+                        
+                                        Player.Character.HumanoidRootPart.CFrame = orientation + newPosition
+                                    end
+                                end
+
+                                task.wait(.1)
+
+                                local args = {
+                                    "Grabbing"
+                                }
+
+                                if not TargetChar:FindFirstChild('GRABBING_CONSTRAINT') then
+                                    game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+                                end
+
+                                task.wait(1)
+                                return
+                            end)
+                        until Target == nil or TargetChar == nil or tick() - o_time >= 5 or not TargetChar:FindFirstChild('Humanoid') or TargetChar:FindFirstChild('Humanoid').Health == 0 or TargetChar:FindFirstChild('GRABBING_CONSTRAINT') or CheckDeath(TargetChar) == true or CheckKnocked(TargetChar) == false
+                
+                        o_time = tick()
+                        task.wait(.35)
+                    end
+
+                    Player.Character.HumanoidRootPart.CFrame = game:GetService('Players'):FindFirstChild(Chatter).Character.HumanoidRootPart.CFrame * CFrame.new(0,0,-3.5)
+
+                    task.wait(.5)
+
+                    local args = {
+                        "Grabbing"
+                    }
+
+                    game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+
+                    task.wait(.35)
+
+                    Player.Character.HumanoidRootPart.CFrame = old_CFrame
+
+                    SummonPause = false
+
+                    local args = {
+                        "Reload",
+                        Player.Character:FindFirstChildOfClass('Tool')
+                    }
+                    game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+
+                    task.spawn(function()
+                        Player.Character.BodyEffects.Reloading_CLIENT.Value = true
+                        local Anim = Player.Character.Humanoid:LoadAnimation(game.ReplicatedStorage.Animations.ReloadAnim)
+                        Anim:Play()
+                        game.Debris:AddItem(Anim, 2)
+                        task.wait(1.5)
+                        Player.Character:FindFirstChild('[DoubleBarrel]').Script.Ammo.CLIENT.Value = Player.Character:FindFirstChild('[DoubleBarrel]').Script.MaxAmmo.Value
+                        Player.Character.BodyEffects.Reloading_CLIENT.Value = false
+
+                        task.wait(.1)
+
+                        if Player.Character:FindFirstChild('[DoubleBarrel]') then Player.Character:FindFirstChild('[DoubleBarrel]').Parent = Player.Backpack end
+                        return
+                    end)
+
+                    task.delay(1.75, function()
+                        Busy = false
+                    end)
+                end
+            elseif Split[1]:lower() == _G.Prefix..'teleport' or Split[1]:lower() == _G.Prefix..'tp' then -- Teleport
+                local Target = getTarget(Split[2]:lower())
+                local SecondTarget = getTarget(Split[3]:lower())
+
+                if Target and SecondTarget and Busy == false then
+                    local o_time = tick()
+                    Busy = true
+                    SummonPause = true
+                    task.wait(.1)
+                    local TargetChar = Target.Character
+                    local SecondTargetChar = SecondTarget.Character
+
+                    if CheckKnocked(Target.Character) == false or Target.Character:FindFirstChild('GRABBING_CONSTRAINT') then
+                        Knock(Target)
+                        task.wait(.7)
+                    end
+
+                    local old_CFrame = Player.Character.HumanoidRootPart.CFrame
+
+                    task.wait()
+
+                    for i=0,150,1 do
+                        local orientation = Player.Character.HumanoidRootPart.CFrame - Player.Character.HumanoidRootPart.Position
+                        local newPosition = TargetChar.UpperTorso.Position + Vector3.new(0, 3, 0)
+        
+                        Player.Character.HumanoidRootPart.CFrame = orientation + newPosition
+                    end
+
+                    task.wait(.25)
+
+                    local args = {
+                        "Grabbing"
+                    }
+
+                    game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+
+                    task.wait(.35)
+
+                    if not TargetChar:FindFirstChild('GRABBING_CONSTRAINT') and CheckDeath(TargetChar) == false and CheckKnocked(TargetChar) == true then
+                        repeat task.wait(.5)
+                            task.spawn(function()
+                                for i=0,50,1 do
+                                    if not TargetChar:FindFirstChild('GRABBING_CONSTRAINT') then
+                                        local orientation = Player.Character.HumanoidRootPart.CFrame - Player.Character.HumanoidRootPart.Position
+                                        local newPosition = TargetChar.UpperTorso.Position + Vector3.new(0, 3, 0)
+                                
+                                        Player.Character.HumanoidRootPart.CFrame = orientation + newPosition
+                                    end
+                                end
+
+                                task.wait(.1)
+
+                                local args = {
+                                    "Grabbing"
+                                }
+
+                                if not TargetChar:FindFirstChild('GRABBING_CONSTRAINT') then
+                                    game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+                                end
+
+                                task.wait(1)
+                                return
+                            end)
+                        until Target == nil or TargetChar == nil or tick() - o_time >= 5 or not TargetChar:FindFirstChild('Humanoid') or TargetChar:FindFirstChild('Humanoid').Health == 0 or TargetChar:FindFirstChild('GRABBING_CONSTRAINT') or CheckDeath(TargetChar) == true or CheckKnocked(TargetChar) == false
+                
+                        o_time = tick()
+                        task.wait(.35)
+                    end
+
+                    Player.Character.HumanoidRootPart.CFrame = SecondTargetChar.HumanoidRootPart.CFrame * CFrame.new(0,0,-3.5)
+
+                    task.wait(.5)
+
+                    local args = {
+                        "Grabbing"
+                    }
+
+                    game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+
+                    task.wait(.5)
+
+                    Player.Character.HumanoidRootPart.CFrame = old_CFrame
+
+                    SummonPause = false
+
+                    local args = {
+                        "Reload",
+                        Player.Character:FindFirstChildOfClass('Tool')
+                    }
+
+                    game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+
+                    task.spawn(function()
+                        Player.Character.BodyEffects.Reloading_CLIENT.Value = true
+                        local Anim = Player.Character.Humanoid:LoadAnimation(game.ReplicatedStorage.Animations.ReloadAnim)
+                        Anim:Play()
+                        game.Debris:AddItem(Anim, 2)
+                        task.wait(1.5)
+                        Player.Character:FindFirstChild('[DoubleBarrel]').Script.Ammo.CLIENT.Value = Player.Character:FindFirstChild('[DoubleBarrel]').Script.MaxAmmo.Value
+                        Player.Character.BodyEffects.Reloading_CLIENT.Value = false
+
+                        task.wait(.1)
+
+                        if Player.Character:FindFirstChild('[DoubleBarrel]') then Player.Character:FindFirstChild('[DoubleBarrel]').Parent = Player.Backpack end
+                        return
+                    end)
+
+                    task.delay(1.75, function()
+                        Busy = false
+                    end)
+                end
+        elseif Split[1]:lower() == _G.Prefix..'pickup' or Split[1]:lower() == _G.Prefix..'up' then -- Pickup
+                local Target = getTarget(Split[2]:lower())
+
+                if Target and Busy == false then
+                    Busy = true
+                    SummonPause = true
+                    task.wait(.1)
+                    --sethiddenproperty(Player.Character.HumanoidRootPart, "PhysicsRepRootPart", nil)
+                    local TargetChar = Target.Character
+                    local old_CFrame = Player.Character.HumanoidRootPart.CFrame
+
+                    for i=0,50,1 do
+                        local orientation = Player.Character.HumanoidRootPart.CFrame - Player.Character.HumanoidRootPart.Position
+                        local newPosition = TargetChar.UpperTorso.Position + Vector3.new(0, 3, 0)
+
+                        Player.Character.HumanoidRootPart.CFrame = orientation + newPosition
+                    end
+
+                    task.wait(.5)
+
+                    local args = {
+                        "Grabbing"
+                    }
+
+                    game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+
+                    task.wait(.5)
+
+                    Player.Character.HumanoidRootPart.CFrame = old_CFrame
+        
+                    SummonPause = false
+                    Busy = false
+                end
+            elseif Split[1]:lower() == _G.Prefix..'drop' or Split[1]:lower() == _G.Prefix..'lower' then -- Drop
+                local args = {
+                    "Grabbing"
+                }
+
+                game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+            elseif Split[1]:lower() == _G.Prefix..'knock' or Split[1]:lower() == _G.Prefix..'pass' then -- Knock
+                local Target = getTarget(Split[2]:lower())
+                local old_CFrame = Player.Character.HumanoidRootPart.CFrame
+
+                if Target and (CheckKnocked(Target.Character) == false or Target.Character:FindFirstChild('GRABBING_CONSTRAINT')) and Busy == false then
+                    Busy = true
+                    SummonPause = true
+                    task.wait(.1)
+                    Knock(Target)
+                    task.wait(.7)
+                    SummonPause = false
+
+                    task.wait()
+
+                    Player.Character.HumanoidRootPart.CFrame = old_CFrame
+
+                    local args = {
+                        "Reload",
+                        Player.Character:FindFirstChildOfClass('Tool')
+                    }
+                    game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+
+                    task.spawn(function()
+                        Player.Character.BodyEffects.Reloading_CLIENT.Value = true
+                        local Anim = Player.Character.Humanoid:LoadAnimation(game.ReplicatedStorage.Animations.ReloadAnim)
+                        Anim:Play()
+                        game.Debris:AddItem(Anim, 2)
+                        task.wait(1.5)
+                        Player.Character:FindFirstChild('[DoubleBarrel]').Script.Ammo.CLIENT.Value = Player.Character:FindFirstChild('[DoubleBarrel]').Script.MaxAmmo.Value
+                        Player.Character.BodyEffects.Reloading_CLIENT.Value = false
+        
+                        task.wait(.1)
+        
+                        if Player.Character:FindFirstChild('[DoubleBarrel]') then Player.Character:FindFirstChild('[DoubleBarrel]').Parent = Player.Backpack end
+                        return
+                    end)
+
+                    task.delay(1.75, function()
+                        Busy = false
+                    end)
+                end
+            elseif Split[1]:lower() == _G.Prefix..'kill' or Split[1]:lower() == _G.Prefix..'end' then -- Kill
+                local Target = getTarget(Split[2]:lower())
+
+                if Target and Busy == false then
+                    local oldCFRM = Player.Character.HumanoidRootPart.CFrame
+                    Busy = true
+                    SummonPause = true
+                    task.wait(.1)
+                    --sethiddenproperty(Player.Character.HumanoidRootPart, "PhysicsRepRootPart", nil)
+                    local TargetChar = Target.Character
+                    task.wait()
+
+                    if CheckKnocked(Target.Character) == false or Target.Character:FindFirstChild('GRABBING_CONSTRAINT') then
+                        Knock(Target)
+                        task.wait(.7)
+                    end
+
+                    for i=0,75,1 do
+                        if CheckDeath(Target.Character) == true then break end
+
+                        local orientation = Player.Character.HumanoidRootPart.CFrame - Player.Character.HumanoidRootPart.Position
+                        local newPosition = TargetChar.UpperTorso.Position + Vector3.new(0, 4.35, 0)
+
+                        Player.Character.HumanoidRootPart.CFrame = orientation + newPosition
+
+                        task.wait(.01)
+
+                        local args = {
+                            [1] = 'Stomp'
+                        }
+        
+                        game:GetService("ReplicatedStorage").MainEvent:FireServer(unpack(args))
+                    end
+
+                    task.wait()
+
+                    Player.Character.HumanoidRootPart.CFrame = oldCFRM
+
+                    task.wait(.1)
+
+                    SummonPause = false
+
+                    task.wait()
+
+                    local args = {
+                        "Reload",
+                        Player.Character:FindFirstChildOfClass('Tool')
+                    }
+                    game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+
+                    task.spawn(function()
+                        Player.Character.BodyEffects.Reloading_CLIENT.Value = true
+                        local Anim = Player.Character.Humanoid:LoadAnimation(game.ReplicatedStorage.Animations.ReloadAnim)
+                        Anim:Play()
+                        game.Debris:AddItem(Anim, 2)
+                        task.wait(1.5)
+                        Player.Character:FindFirstChild('[DoubleBarrel]').Script.Ammo.CLIENT.Value = Player.Character:FindFirstChild('[DoubleBarrel]').Script.MaxAmmo.Value
+                        Player.Character.BodyEffects.Reloading_CLIENT.Value = false
+
+                        task.wait(.1)
+
+                        if Player.Character:FindFirstChild('[DoubleBarrel]') then Player.Character:FindFirstChild('[DoubleBarrel]').Parent = Player.Backpack end
+                        return
+                    end)
+
+                    task.delay(1.75, function()
+                        Busy = false
+                    end)
+                end
+            elseif Split[1]:lower() == _G.Prefix..'autotargets' or Split[1]:lower() == _G.Prefix..'at' then -- Auto Targets
+                if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+
+                Autoing = true
+                task.spawn(function()
+                    updateCurrentTarget()
+                    while task.wait() do
+                        if _G.Exit == true then return end
+                        if Autoing == false then return end
+                        if Player.Character and Player.Character:FindFirstChild('HumanoidRootPart') and CurrentTarget ~= nil and CurrentTarget.Character ~= nil and CurrentTarget.Character:FindFirstChild('UpperTorso') and not CurrentTarget.Character:FindFirstChild('ForceField') then
+                            if Method == 'Gun' then
+                                if Player.Character:FindFirstChild('[Knife]') then Player.Character:FindFirstChild('[Knife]').Parent = Player.Backpack end
+
+                                if (CheckKnocked(CurrentTarget.Character) == false or CurrentTarget.Character:FindFirstChild('GRABBING_CONSTRAINT')) and Switch_CD == false and not CurrentTarget.Character:FindFirstChild('ForceField') then
+                                    Busy = true
+                                    task.spawn(function()
+                                        Player.Character:FindFirstChild('HumanoidRootPart').AssemblyLinearVelocity = Vector3.zero
+                                        Player.Character:FindFirstChild('HumanoidRootPart').AssemblyAngularVelocity = Vector3.zero
+                                        SummonPause = true
+
+                                        Player.Character.HumanoidRootPart.CFrame = TargetHRP.CFrame * CFrame.new(0,12.5,0) * CFrame.Angles(math.rad(-90), 0, 0)
+                                        task.wait()
+                                        Knock(CurrentTarget)
+                                        task.wait(.7)
+
+                                        if Player.Character:FindFirstChild('[DoubleBarrel]') and Player.Character:FindFirstChild('[DoubleBarrel]'):FindFirstChild('Script').Ammo.CLIENT.Value == 0 then
+                                            local args = {
+                                                "Reload",
+                                                Player.Character:FindFirstChildOfClass('Tool')
+                                            }
+                                            game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+                                            Player.Character.BodyEffects.Reloading_CLIENT.Value = true
+                                            local Anim = Player.Character.Humanoid:LoadAnimation(game.ReplicatedStorage.Animations.ReloadAnim)
+                                            Anim:Play()
+                                            game.Debris:AddItem(Anim, 2)
+                                            task.wait(1.5)
+                                            Player.Character:FindFirstChild('[DoubleBarrel]').Script.Ammo.CLIENT.Value = Player.Character:FindFirstChild('[DoubleBarrel]').Script.MaxAmmo.Value
+                                            Player.Character.BodyEffects.Reloading_CLIENT.Value = false
+                                        end
+        
+                                        task.wait(.25)
+                                        Busy = false
+                                        return
+                                    end)
+                                elseif CheckDeath(CurrentTarget.Character) == false and Switch_CD == false then
+                                    task.spawn(function()
+                                        Busy = true
+                                        SummonPause = true
+                                        local orientation = Player.Character.HumanoidRootPart.CFrame - Player.Character.HumanoidRootPart.Position
+                                        local O = 0
+
+                                        if _G.Type == 1 then
+                                            O = .75
+                                        elseif _G.Type == 2 then
+                                            O = -.75
+                                        elseif _G.Type == 3 then
+                                            O = 1.25
+                                        elseif _G.Type == 4 then
+                                            O = 1.25
+                                        end
+
+                                        local newPosition = CurrentTarget.Character.UpperTorso.Position + Vector3.new(O, 4.35, O)
+
+                                        Player.Character.HumanoidRootPart.CFrame = orientation + newPosition
+
+                                        task.wait(.01)
+
+                                        local args = {
+                                            [1] = 'Stomp'
+                                        }
+        
+                                        game:GetService("ReplicatedStorage").MainEvent:FireServer(unpack(args))
+                                        return
+                                    end)
+                                else
+                                    updateCurrentTarget()
+                                    Busy = false
+                                    SummonPause = false
+                                end
+                            else
+                                Player:WaitForChild('Backpack')
+                                if Player.Character:FindFirstChild('[DoubleBarrel]') then Player.Character:FindFirstChild('[DoubleBarrel]').Parent = Player.Backpack end
+                                if Player.Backpack:FindFirstChild('[Knife]') then Player.Backpack:FindFirstChild('[Knife]').Parent = Player.Character end
+
+                                if (CheckKnocked(CurrentTarget.Character) == false or CurrentTarget.Character:FindFirstChild('GRABBING_CONSTRAINT')) and Switch_CD == false and Player.Character:FindFirstChild('[Knife]') and Player.Character:FindFirstChild('[Knife]'):FindFirstChild('Handle') and Player.Character:FindFirstChild('HumanoidRootPart') then
+                                    task.spawn(function()
+                                        Busy = true
+                                        SummonPause = true
+                                        Player.Character:FindFirstChild('HumanoidRootPart').AssemblyLinearVelocity = Vector3.zero
+                                        Player.Character:FindFirstChild('HumanoidRootPart').AssemblyAngularVelocity = Vector3.zero
+
+                                        --Player.Character:FindFirstChild('[Knife]').Handle.HITBOX_PART.Transparency = 0
+                                        --Player.Character:FindFirstChild('[Knife]').Handle.HITBOX_PART.Size = Vector3.new(30,30,30) --Vector3.new(7.25,7.25,7.25)
+                                        Player.Character:FindFirstChild('[Knife]'):Activate()
+
+                                        if Track ~= nil then
+                                            Track:Stop()
+                                        end
+
+                                        task.spawn(function()
+                                            task.wait(.3)
+
+                                            local RealTarget = CurrentTarget.Character
+
+                                            if CurrentTarget.Character:FindFirstChild('GRABBING_CONSTRAINT') then
+                                                RealTarget = CurrentTarget.Character:FindFirstChild('GRABBING_CONSTRAINT').Part1.Parent
+                                            end
+
+                                            firetouchinterest(Player.Character:FindFirstChild('[Knife]').Handle.HITBOX_PART, RealTarget.HumanoidRootPart, 0)
+                                            firetouchinterest(Player.Character:FindFirstChild('[Knife]').Handle.HITBOX_PART, RealTarget.HumanoidRootPart, 1)
+                                            return
+                                        end)
+
+                                        sethiddenproperty(Player.Character.HumanoidRootPart, "PhysicsRepRootPart", CurrentTarget.Character.HumanoidRootPart)
+
+                                        if _G.Type == 1 then
+                                            Player.Character.HumanoidRootPart.CFrame = CurrentTarget.Character.HumanoidRootPart.CFrame * CFrame.new(0,3.5,-7) * CFrame.Angles(0, math.rad(-180), 0) -- * CFrame.Angles(math.rad(-90), 0, 0)
+                                        elseif _G.Type == 2 then
+                                            Player.Character.HumanoidRootPart.CFrame = CurrentTarget.Character.HumanoidRootPart.CFrame * CFrame.new(0,3.5,7)-- * CFrame.Angles(math.rad(-90), 0, 0)
+                                        elseif _G.Type == 3 then
+                                            Player.Character.HumanoidRootPart.CFrame = CurrentTarget.Character.HumanoidRootPart.CFrame * CFrame.new(-7,3.5,0) * CFrame.Angles(0, math.rad(-90), 0)
+                                        elseif _G.Type == 4 then
+                                            Player.Character.HumanoidRootPart.CFrame = CurrentTarget.Character.HumanoidRootPart.CFrame * CFrame.new(7,3.5,0) * CFrame.Angles(0, math.rad(90), 0)
+                                        end
+
+                                        Player.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.zero
+                                        Player.Character.HumanoidRootPart.AssemblyAngularVelocity = Vector3.zero
+                                        Busy = false
+
+                                        KnockCD = true
+                                        task.delay(1, function()
+                                            KnockCD = false
+                                        end)
+                                        return
+                                    end)
+                                elseif CheckDeath(CurrentTarget.Character) == false and Switch_CD == false and KnockCD == false then
+                                    task.spawn(function()
+                                        Busy = true
+                                        SummonPause = true
+                                        task.wait()
+                                        Player.Character:FindFirstChild('[Knife]').Handle.HITBOX_PART.Size = Vector3.new(0,0,0)
+                                        task.wait()
+                                        local orientation = Player.Character.HumanoidRootPart.CFrame - Player.Character.HumanoidRootPart.Position
+                                        local O = 0
+
+                                        if _G.Type == 1 then
+                                            O = .75
+                                        elseif _G.Type == 2 then
+                                            O = -.75
+                                        elseif _G.Type == 3 then
+                                            O = 1.25
+                                        elseif _G.Type == 4 then
+                                            O = -1.25
+                                        end
+        
+                                        local newPosition = CurrentTarget.Character.UpperTorso.Position + Vector3.new(O, 4.35, O)
+        
+                                        --sethiddenproperty(Player.Character.HumanoidRootPart, "PhysicsRepRootPart", CurrentTarget.Character.HumanoidRootPart)
+        
+                                        Player.Character.HumanoidRootPart.CFrame = orientation + newPosition
+        
+                                        task.wait(.01)
+        
+                                        local args = {
+                                            [1] = 'Stomp'
+                                        }
+                
+                                        game:GetService("ReplicatedStorage").MainEvent:FireServer(unpack(args))
+                                        return
+                                    end)
+                                else
+                                    updateCurrentTarget()
+                                    Busy = false
+                                    SummonPause = false
+                                end
+                            end
+                        elseif CurrentTarget == nil or CurrentTarget.Character == nil then
+                            updateCurrentTarget()
+                        end
+                    end
+                    return
+                end)
+            elseif Split[1]:lower() == _G.Prefix..'stop' or Split[1]:lower() == _G.Prefix..'close' then -- Stop
+                if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+
+                Autoing = false
+                SummonPause = false
+                CurrentTarget = nil
+
+                if Track ~= nil and Summoned == true then
+                    Track:Play()
+                end
+            elseif Split[1]:lower() == _G.Prefix..'add' or Split[1]:lower() == _G.Prefix..'a' then -- Add
+                local Target = getTarget(Split[2]:lower())
+
+                if Target then
+                    if not table.find(AutoTargets, Target.Name) then
+                        table.insert(AutoTargets, Target.Name)
+                    end
+                end
+            elseif Split[1]:lower() == _G.Prefix..'remove' or Split[1]:lower() == _G.Prefix..'r' then -- Remove
+                local Target = getTarget(Split[2]:lower())
+
+                if Target then
+                    if table.find(AutoTargets, Target.Name) then
+                        for i,v in ipairs(AutoTargets) do
+                            if v == Target.Name then
+                                if v == CurrentTarget.Name then
+                                    CurrentTarget = nil
+                                end
+                                table.remove(AutoTargets, i)
+                            end
+                        end
+                    end
+                end
+            elseif Split[1]:lower() == _G.Prefix..'clear' or Split[1]:lower() == _G.Prefix..'clr' then -- Clear
+                if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+
+                table.clear(AutoTargets)
+                CurrentTarget = nil
+            elseif Split[1]:lower() == _G.Prefix..'evolve' or Split[1]:lower() == _G.Prefix..'e' then -- Evolve
+                if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+
+                add_AND_remove_Limbs()
+                Evolved = true
+                E_Track = Player.Character:WaitForChild('Humanoid'):LoadAnimation(E_Anim)
+                --E_Track.Priority = Enum.AnimationPriority.Action2
+                E_Track:Play()
+                E_Track.TimePosition = .5
+                E_Track:AdjustSpeed(0)
+            elseif Split[1]:lower() == _G.Prefix..'weaken' or Split[1]:lower() == _G.Prefix..'w' then -- Weaken
+                if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+
+                add_AND_remove_Limbs()
+                Evolved = false
+                if E_Track ~= nil then
+                    E_Track:Stop()
+                end
+            elseif Split[1]:lower() == _G.Prefix..'monitor' or Split[1]:lower() == _G.Prefix..'m' then -- Monitor
+                local Target = getTarget(Split[2]:lower())
+        
+                if Target then
+                    if not table.find(Monitoring, Target) then
+                        --print('m: '..Target.Name)
+                        table.insert(Monitoring, Target)
+                    end
+                end
+            elseif Split[1]:lower() == _G.Prefix..'unmonitor' or Split[1]:lower() == _G.Prefix..'unm' then -- Unmonitor
+                local Target = getTarget(Split[2]:lower())
+
+                if Target then
+                    if table.find(Monitoring, Target) then
+                        for i,v in ipairs(Monitoring) do
+                            if v == Target then
+                                table.remove(Monitoring, i)
+                            end
+                        end
+                    end
+                end
+            elseif Split[1]:lower() == _G.Prefix..'clearm' or Split[1]:lower() == _G.Prefix..'clrm' then -- Clearm
+                if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+
+                Monitoring = {}
+            elseif Split[1]:lower() == _G.Prefix..'reset' or Split[1]:lower() == _G.Prefix..'re' then -- Reset
+                if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+
+                Player.Character.Humanoid.Health = 0
+                replicatesignal(Player.Kill)
+            elseif Split[1]:lower() == _G.Prefix..'kick' or Split[1]:lower() == _G.Prefix..'exit' then -- Kick
+                if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
+                if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
+                if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
+                if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
+
+                Player:Kick()
+            end
+            return
+        end)
+    end
+end
+
+game:GetService("TextChatService").OnIncomingMessage = function(message)
+    if message.Text == nil or message.TextSource == nil or message.TextSource.UserId == nil then return end
+
+    if _G.Exit == true then return end
+
+    local Msg = message.Text
+    local Chatter = game:GetService('Players'):GetPlayerByUserId(message.TextSource.UserId).Name
+
+    if not table.find(_G.Whitelist, Chatter) and not table.find(LesserWhitelist, Chatter) then return end
+
+    receiveMessage(Msg, Chatter)
+end
+
+local firstMessage = false
+
+task.spawn(function()
+    if _G.DiscordWhitelist ~= nil and _G.DiscordWhitelist[1] ~= nil and _G.DiscordWhitelist[1] ~= 'DiscordUserId' and _G.DiscordWhitelist[1] ~= '' then
+        while true do
+            local res = request({
+                Url = "https://calm-shadow-e0a7.x7antt.workers.dev/receive?since=" .. lastTimestamp,
+                Method = "GET"
+            })
+
+            local data = HttpService:JSONDecode(res.Body)
+
+            if data.hasMessage and data.timestamp ~= lastTimestamp then
+                lastTimestamp = data.timestamp
+                if table.find(_G.DiscordWhitelist, data.command) then
+                    if firstMessage == true then
+                        --print("received: ", data.command, data.value)
+                        receiveMessage(data.value)
+                    else
+                        --print("first_received: ", data.command, data.value)
+                        firstMessage = true
+                    end
+                end
+            end
+        end
+    end
+end)
+
+local PickingUp = false
+local SavedTable = {}
+
+task.spawn(function()
+    while task.wait(.1) do
+        if _G.Exit == true then return end
+        task.spawn(function()
+            for i,v in ipairs(Monitoring) do
+            if v.Character and v.Character:FindFirstChild('Humanoid') and v.Character:FindFirstChild('UpperTorso') and PickingUp == false and Busy == false and Autoing == false then
+                if CheckKnocked(v.Character) == true and CheckDeath(v.Character) == false and not v.Character:FindFirstChild('GRABBING_CONSTRAINT') and not table.find(SavedTable, v) then
+                    local oldCFRM = Player.Character.HumanoidRootPart.CFrame
+                    Busy = true
+                    PickingUp = true
+                    SummonPause = true
+
+                    task.wait(.1)
+
+                    local TargetChar = v.Character
+                    local RandomSafeSpots = {CFrame.new(53.787735, 124.098007, -277.64444, -0.629061103, 6.47420322e-08, -0.77735585, 1.00551745e-07, 1, 1.91526661e-09, 0.77735585, -7.69596653e-08, -0.629061103), CFrame.new(406.154968, 122.984528, -564.76062, 0.027509639, -0.000646424189, -0.999621332, 0.000347024761, 0.999999762, -0.000637118763, 0.999621451, -0.000329366449, 0.027509857), CFrame.new(-897.847656, 129.143982, -707.805237, 0.97806865, -7.18820914e-08, -0.208282813, 8.12280874e-08, 1, 3.63186849e-08, 0.208282813, -5.24405834e-08, 0.97806865)}
+
+                    if CheckDeath(v.Character) == false then
+                        local o_time = tick()
+
+                        for i=0,50,1 do
+                            local orientation = Player.Character.HumanoidRootPart.CFrame - Player.Character.HumanoidRootPart.Position
+                            local newPosition = TargetChar.UpperTorso.Position + Vector3.new(0, 3, 0)
+        
+                            Player.Character.HumanoidRootPart.CFrame = orientation + newPosition
+                        end
+
+                        task.wait(.25)
+
+                        for i=0,25,1 do
+                            local orientation = Player.Character.HumanoidRootPart.CFrame - Player.Character.HumanoidRootPart.Position
+                            local newPosition = TargetChar.UpperTorso.Position + Vector3.new(0, 3, 0)
+                            
+                            Player.Character.HumanoidRootPart.CFrame = orientation + newPosition
+                        end
+
+                        local args = {
+                            "Grabbing"
+                        }
+
+                        game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+
+                        task.wait(.35)
+
+                        if not v.Character:FindFirstChild('GRABBING_CONSTRAINT') and CheckDeath(v.Character) == false then
+                            repeat task.wait(.5)
+                                task.spawn(function()
+                                    for i=0,50,1 do
+                                        if not v.Character:FindFirstChild('GRABBING_CONSTRAINT') then
+                                            local orientation = Player.Character.HumanoidRootPart.CFrame - Player.Character.HumanoidRootPart.Position
+                                            local newPosition = v.Character.UpperTorso.Position + Vector3.new(0, 3, 0)
+                                    
+                                            Player.Character.HumanoidRootPart.CFrame = orientation + newPosition
+                                        end
+                                    end
+
+                                    task.wait(.1)
+
+                                    local args = {
+                                        "Grabbing"
+                                    }
+
+                                    if not v.Character:FindFirstChild('GRABBING_CONSTRAINT') then
+                                        game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+                                    end
+
+                                    task.wait(1)
+                                    return
+                                end)
+                            until v == nil or v.Character == nil or tick() - o_time >= 3 or not v.Character:FindFirstChild('Humanoid') or v.Character:FindFirstChild('Humanoid').Health == 0 or v.Character:FindFirstChild('GRABBING_CONSTRAINT') or not table.find(Monitoring, v) or CheckDeath(v.Character) == true or CheckKnocked(v.Character) == false
+
+                            o_time = tick()
+                        end
+
+                        Player.Character.HumanoidRootPart.CFrame = RandomSafeSpots[math.random(1, #RandomSafeSpots)]
+
+                        task.wait(1)
+
+                        local args = {
+                            "Grabbing"
+                        }
+
+                        game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+
+                        task.wait(.5)
+
+                        Player.Character.HumanoidRootPart.CFrame = oldCFRM
+
+                        SummonPause = false
+
+                        table.insert(SavedTable, v)
+
+                        task.delay(15, function()
+                            for i,v_ in ipairs(SavedTable) do
+                                if v_ == v then
+                                    table.remove(SavedTable, i)
+                                end
+                            end
+                        end)
+                    end
+
+                    task.wait(1)
+
+                    Busy = false
+                    SummonPause = false
+                    PickingUp = false
+                end
+            end
+        end
+            return
+        end)
+    end
+end)
+
+Player.Character:WaitForChild("Humanoid").AnimationPlayed:Connect(function(a)
+    if _G.Exit == true then return end
+	if table.find(BlacklistedAnims, a.Animation.AnimationId) and Evolved == true then
+		a:Stop()
+	end
+end)
+
+Player.CharacterAdded:Connect(function(Char)
+    local Humanoid = Char:WaitForChild('Humanoid')
+    task.wait(.1)
+
+    if Summoned == true then
+        Track = Player.Character.Humanoid:LoadAnimation(Anim)
+        --Track.Priority = Enum.AnimationPriority.Action3
+        Track:Play()
+    end
+
+    if Fucking == true then
+        F_Track = Player.Character.Humanoid:LoadAnimation(F_Anim)
+        F_Track.Priority = Enum.AnimationPriority.Action4
+        F_Track:Play()
+    end
+
+    if Sucking == true then
+        S_Track = Player.Character.Humanoid:LoadAnimation(S_Anim)
+        S_Track.Priority = Enum.AnimationPriority.Action4
+        S_Track:Play()
+    end
+
+    if Evolved == true then
+        E_Track = Player.Character:WaitForChild('Humanoid'):LoadAnimation(E_Anim)
+        --E_Track.Priority = Enum.AnimationPriority.Action2
+        E_Track:Play()
+        E_Track.TimePosition = .5
+        E_Track:AdjustSpeed(0)
+    end
+
+    Player.Character:WaitForChild("Humanoid").AnimationPlayed:Connect(function(a)
+	    if table.find(BlacklistedAnims, a.Animation.AnimationId) and Evolved == true then
+	    	a:Stop()
+	    end
+    end)
+end)
+
+task.spawn(function()
+    game:GetService('RunService').Heartbeat:Connect(function()
+        if _G.Exit == true then return end
+        if Summoned == true and SummonPause == false and Player.Character and Player.Character:FindFirstChild('HumanoidRootPart') and Master ~= nil and Master.Character and Master.Character:FindFirstChild('HumanoidRootPart') and CheckKnocked(Master.Character) == false then
+            local HRP = Player.Character:FindFirstChild('HumanoidRootPart')
+            local MasterHRP = Master.Character:FindFirstChild('HumanoidRootPart')
+            local Offset = CFrame.new(0,0,0)
+
+            if KA == false then
+                if _G.Type == 1 or _G.Type == 3 or Fucking == true or Sucking == true then
+                    if Sucking == true then
+                        Offset = CFrame.new(X,0,Z) * CFrame.Angles(0, math.rad(-180), 0)
+                    else
+                        Offset = CFrame.new(X,0,Z)
+                    end
+                elseif _G.Type == 2 or _G.Type == 4 then
+                    Offset = CFrame.new(-X,0,Z)
+                end
+            else
+                if Track ~= nil then
+                    Track:Stop()
+                end
+                if _G.Type == 1 then
+                    Offset = CFrame.new(0,0,7.5) * CFrame.Angles(0, math.rad(-180), 0)
+                elseif _G.Type == 2 then -- 123abc
+                    Offset = CFrame.new(0,0,-7.5)
+                elseif _G.Type == 3 then
+                    Offset = CFrame.new(7.25,0,0) * CFrame.Angles(0, math.rad(-90), 0)
+                elseif _G.Type == 4 then
+                    Offset = CFrame.new(-7.5,0,0) * CFrame.Angles(0, math.rad(90), 0)
+                end
+
+                if Player.Backpack:FindFirstChild('[Knife]') then Player.Backpack:FindFirstChild('[Knife]').Parent = Player.Character end
+
+                Player.Character:FindFirstChild('[Knife]').Handle.HITBOX_PART.Size = Vector3.new(25,25,25)
+                Player.Character:FindFirstChild('[Knife]'):Activate()
+            end
+
+            HRP.AssemblyLinearVelocity = Vector3.zero
+            HRP.AssemblyAngularVelocity = Vector3.zero
+            sethiddenproperty(HRP, "PhysicsRepRootPart", MasterHRP)
+            HRP.CFrame = MasterHRP.CFrame * Offset
+        end
+    end)
+end)
+
+task.spawn(function()
+    while task.wait(.1) do
+        if _G.Exit == true then return end
+
+        if KA == true and Master ~= nil and game:GetService('Players'):FindFirstChild(Master.Name) then
+            if Master.Character ~= nil and Master.Character:FindFirstChild('HumanoidRootPart') and Master.Character:FindFirstChild('HumanoidRootPart').CanTouch == true then
+                for i,v in next, Master.Character:GetChildren() do
+                    if v:IsA('BasePart') then
+                        v.CanTouch = false
+                    end
+                end
+            end
+        end
+    end
+end)
+
+local CD = false
+task.spawn(function()
+    while task.wait(1) do
+        if _G.Exit == true then return end
+	    if Player.Character ~= nil and CheckKnocked(Player.Character) == true and CD == false then
+		    CD = true
+		    replicatesignal(Player.Kill)
+		    task.wait(5)
+		    CD = false
+	    end
+    end
+end)
+
+local KnifeWhitelist = {_G.Alt1, _G.Alt2, _G.Alt3, _G.Alt4}
+
+task.spawn(function()
+    for i,v in next, game:GetService('Players'):GetChildren() do
+        if v ~= Player and table.find(KnifeWhitelist, v.Name) then
+            task.spawn(function()
+                local Char = v.Character or v.CharacterAdded:Wait()
+                Char:WaitForChild('HumanoidRootPart')
+                task.wait(.1)
+                for i,v in next, Char:GetChildren() do
+                    if v:IsA('BasePart') then
+                        v.CanTouch = false
+                    end
+                end
+
+                v.CharacterAdded:Connect(function(Char)
+                    task.wait()
+                    Char:WaitForChild('HumanoidRootPart')
+                    task.wait(.1)
+                    for i,v in next, Char:GetChildren() do
+                        if v:IsA('BasePart') then
+                            v.CanTouch = false
+                        end
+                    end
+                end)
+                return
+            end)
+        end
+    end
+end)
+
+game:GetService('Players').PlayerAdded:Connect(function(v)
+    if table.find(KnifeWhitelist, v.Name) then
+        v.CharacterAdded:Connect(function(Char)
+            task.wait()
+            Char:WaitForChild('HumanoidRootPart')
+            task.wait(.1)
+            for i,v in next, Char:GetChildren() do
+                if v:IsA('BasePart') then
+                    v.CanTouch = false
+                end
+            end
+        end)
+    end
+end)
+
+task.spawn(function()
+    while task.wait(.1) do
+        if _G.Exit == true then return end
+
+        local args = {
+            "RequestAFKDisplay",
+            false
+        }
+
+        game:GetService("ReplicatedStorage"):WaitForChild("MainEvent"):FireServer(unpack(args))
+    end
+end)
+
+--[[for i,v in next, workspace.FFA_MAP.Map:GetChildren() do
+	if (v.Name ~= 'Part' or v.BrickColor == BrickColor.new('Linen')) and v.Name ~= 'Union' then
+		v:Destroy()
+	end
+end]]
