@@ -211,7 +211,7 @@ local Autoing = false
 local Monitoring = {}
 local KnockCD = false
 local KA = false
-local AllowRequests = false
+local AllowRequests = true
 
 local BlacklistedAnims = {
     'rbxassetid://9834705027',
