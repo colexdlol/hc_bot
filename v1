@@ -1460,7 +1460,7 @@ local firstMessage = false
 
 task.spawn(function()
     if _G.DiscordWhitelist ~= nil and _G.DiscordWhitelist[1] ~= nil and _G.DiscordWhitelist[1] ~= 'DiscordUserId' and _G.DiscordWhitelist[1] ~= '' then
-        while true do
+        while task.wait(4) do
             local res = request({
                 Url = "https://calm-shadow-e0a7.x7antt.workers.dev/receive?since=" .. lastTimestamp,
                 Method = "GET"
