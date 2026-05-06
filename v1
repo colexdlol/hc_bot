@@ -1164,7 +1164,7 @@ local function receiveMessage(Msg, Chatter)
                                         Player.Character:FindFirstChild('HumanoidRootPart').AssemblyAngularVelocity = Vector3.zero
                                         SummonPause = true
 
-                                        Player.Character.HumanoidRootPart.CFrame = TargetHRP.CFrame * CFrame.new(0,12.5,0) * CFrame.Angles(math.rad(-90), 0, 0)
+                                        Player.Character.HumanoidRootPart.CFrame = CurrentTarget.Character.HumanoidRootPart.CFrame * CFrame.new(0,12.5,0) * CFrame.Angles(math.rad(-90), 0, 0)
                                         task.wait()
                                         Knock(CurrentTarget)
                                         task.wait(.7)
