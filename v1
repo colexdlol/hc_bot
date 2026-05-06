@@ -1,4 +1,5 @@
 local HttpService = game:GetService("HttpService")
+local clientId = game:GetService("HttpService"):GenerateGUID(false)
 local UR_L
 
 task.spawn(function()
@@ -1472,7 +1473,7 @@ task.spawn(function()
         while task.wait(.5) do
             if AllowRequests == true then
                 local res = request({
-                    Url = UR_L.."receive"--[[ .. lastTimestamp]],
+                    Url = UR_L.."receive?clientId=" .. clientId,
                     Method = "GET"
                 })
 
