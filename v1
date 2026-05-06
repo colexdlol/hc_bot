@@ -1,5 +1,5 @@
 local HttpService = game:GetService("HttpService")
-local lastTimestamp = 0
+local URL = 'https://negotiation-joins-initial-throat.trycloudflare.com/'
 
 _G.Type = 1
 
@@ -1467,7 +1467,7 @@ task.spawn(function()
         while task.wait(.5) do
             if AllowRequests == true then
                 local res = request({
-                    Url = "https://senate-friendly-foods-lap.trycloudflare.com/receive"--[[ .. lastTimestamp]],
+                    Url = URL.."receive"--[[ .. lastTimestamp]],
                     Method = "GET"
                 })
 
