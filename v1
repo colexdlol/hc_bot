@@ -10,6 +10,7 @@ end)
 
 if table.find(_G.Whitelist, game:GetService('Players').LocalPlayer.Name) then
     local Mod_IDs = {
+    218371205,
     8650248838,
     8126737616,
     347856565,
@@ -210,6 +211,7 @@ local Autoing = false
 local Monitoring = {}
 local KnockCD = false
 local KA = false
+local AllowRequests = false
 
 local BlacklistedAnims = {
     'rbxassetid://9834705027',
@@ -580,6 +582,8 @@ local function receiveMessage(Msg, Chatter)
                 Busy = false
                 PickingUp = false
                 KnockCD = false
+            elseif Split[1]:lower() == (_G.Prefix..'ar' or Split[1]:lower() == _G.Prefix..'a_req' or Split[1]:lower() == _G.Prefix..'allowreq') and table.find(_G.Whitelist, Chatter) then -- Allow Requests
+                AllowRequests = not AllowRequests
             elseif Split[1]:lower() == _G.Prefix..'switch' or Split[1]:lower() == _G.Prefix..'sw' then -- Switch
                 if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
                 if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
@@ -1460,23 +1464,25 @@ local firstMessage = false
 
 task.spawn(function()
     if _G.DiscordWhitelist ~= nil and _G.DiscordWhitelist[1] ~= nil and _G.DiscordWhitelist[1] ~= 'DiscordUserId' and _G.DiscordWhitelist[1] ~= '' then
-        while task.wait(2) do
-            local res = request({
-                Url = "https://calm-shadow-e0a7.x7antt.workers.dev/receive?since=" .. lastTimestamp,
-                Method = "GET"
-            })
+        while task.wait(1.5) do
+            if AllowRequests == true then
+                local res = request({
+                    Url = "https://calm-shadow-e0a7.x7antt.workers.dev/receive?since=" .. lastTimestamp,
+                    Method = "GET"
+                })
 
-            local data = HttpService:JSONDecode(res.Body)
+                local data = HttpService:JSONDecode(res.Body)
 
-            if data.hasMessage and data.timestamp ~= lastTimestamp then
-                lastTimestamp = data.timestamp
-                if table.find(_G.DiscordWhitelist, data.command) then
-                    if firstMessage == true then
-                        --print("received: ", data.command, data.value)
-                        receiveMessage(data.value)
-                    else
-                        --print("first_received: ", data.command, data.value)
-                        firstMessage = true
+                if data.hasMessage and data.timestamp ~= lastTimestamp then
+                    lastTimestamp = data.timestamp
+                    if table.find(_G.DiscordWhitelist, data.command) then
+                        if firstMessage == true then
+                            --print("received: ", data.command, data.value)
+                            receiveMessage(data.value)
+                        else
+                            --print("first_received: ", data.command, data.value)
+                            firstMessage = true
+                        end
                     end
                 end
             end
