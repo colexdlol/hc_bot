@@ -1,3 +1,5 @@
+local WL = _G.Whitelist
+
 local HttpService = game:GetService("HttpService")
 local clientId = game:GetService("HttpService"):GenerateGUID(false)
 local UR_L
@@ -9,13 +11,18 @@ end)
 
 _G.Type = 1
 
+workspace.FallenPartsDestroyHeight = -math.huge
+
 game:GetService('Players').LocalPlayer.Idled:Connect(function()
     game:GetService("VirtualUser"):CaptureController()
     game:GetService("VirtualUser"):ClickButton2(Vector2.new(0, 0))
 end)
 
-if table.find(_G.Whitelist, game:GetService('Players').LocalPlayer.Name) then
-    local Mod_IDs = {
+local Mod_IDs = {
+    204234,
+    7128148379,
+    7447000303,
+    7375368633,
     218371205,
     8650248838,
     8126737616,
@@ -160,6 +167,8 @@ local function ModChecker(Plr)
 
     return false
 end
+
+if table.find(_G.Whitelist, game:GetService('Players').LocalPlayer.Name) then
 
 task.spawn(function()
     for i,Plr in next, game:GetService('Players'):GetPlayers() do
@@ -1438,8 +1447,51 @@ local function receiveMessage(Msg, Chatter)
                 if Split[2] ~= nil and _G.Type == 3 and Split[2] ~= '3' then return end
                 if Split[2] ~= nil and _G.Type == 4 and Split[2] ~= '4' then return end
 
-                Player.Character.Humanoid.Health = 0
-                replicatesignal(Player.Kill)
+		        pcall(function()
+                    Player.Character.Head:Destroy()
+                    replicatesignal(Player.Kill)
+                    return
+                end)
+            elseif Split[1]:lower() == _G.Prefix..'check' or Split[1]:lower() == _G.Prefix..'mod_check' then -- Mod Check
+                if _G.DiscordWhitelist ~= nil and _G.DiscordWhitelist[1] ~= nil and _G.DiscordWhitelist[1] ~= 'DiscordUserId' and _G.DiscordWhitelist[1] ~= '' then
+                    task.spawn(function()
+                        for i,Plr in next, game:GetService('Players'):GetPlayers() do
+                            if Plr ~= Player then
+                                if ModChecker(Plr) == true then
+                                    request({
+                                        Url = UR_L.."send",
+                                        Method = "POST",
+                                        Headers = { ["Content-Type"] = "application/json" },
+                                        Body = game:GetService("HttpService"):JSONEncode({
+                                            command = "Mod Notifier",
+                                            value = Plr.Name,
+                                            discordId = _G.DiscordWhitelist[1]
+                                        })
+                                    })
+                                end
+                            end
+                        end
+                        return
+                    end)
+                end
+
+                task.spawn(function()
+                    for i,Plr in next, game:GetService('Players'):GetPlayers() do
+                        if Plr ~= Player then
+                            if ModChecker(Plr) == true then
+                                game:GetService("StarterGui"):SetCore("SendNotification", {
+    				                Title = "Mod Notifier",
+    				                Text = 'Moderator has joined : '..Plr.Name,
+    				                Duration = 15
+				                })
+                                local Sound = Instance.new('Sound', game:GetService('SoundService')); Sound.SoundId = 'rbxassetid://1570162306'; Sound.Volume = 5; Sound.RollOffMode = Enum.RollOffMode.Linear; Sound.RollOffMaxDistance = 100000
+                                Sound:Play()
+                                game.Debris:AddItem(Sound, 1)
+                            end
+                        end
+                    end
+                    return
+                end)
             elseif Split[1]:lower() == _G.Prefix..'kick' or Split[1]:lower() == _G.Prefix..'exit' then -- Kick
                 if Split[2] ~= nil and _G.Type == 1 and Split[2] ~= '1' then return end
                 if Split[2] ~= nil and _G.Type == 2 and Split[2] ~= '2' then return end
@@ -1461,12 +1513,49 @@ game:GetService("TextChatService").OnIncomingMessage = function(message)
     local Msg = message.Text
     local Chatter = game:GetService('Players'):GetPlayerByUserId(message.TextSource.UserId).Name
 
-    if not table.find(_G.Whitelist, Chatter) and not table.find(LesserWhitelist, Chatter) then return end
+    if not table.find(WL, Chatter) and not table.find(LesserWhitelist, Chatter) then return end
 
     receiveMessage(Msg, Chatter)
 end
 
 local firstMessage = false
+
+if _G.DiscordWhitelist ~= nil and _G.DiscordWhitelist[1] ~= nil and _G.DiscordWhitelist[1] ~= 'DiscordUserId' and _G.DiscordWhitelist[1] ~= '' then
+    task.spawn(function()
+        for i,Plr in next, game:GetService('Players'):GetPlayers() do
+            if Plr ~= Player then
+                if ModChecker(Plr) == true then
+                    request({
+                        Url = UR_L.."send",
+                        Method = "POST",
+                        Headers = { ["Content-Type"] = "application/json" },
+                        Body = game:GetService("HttpService"):JSONEncode({
+                            command = "Mod Notifier",
+                            value = Plr.Name,
+                            discordId = _G.DiscordWhitelist[1]
+                        })
+                    })
+                end
+            end
+        end
+        return
+    end)
+
+    game:GetService('Players').PlayerAdded:Connect(function(Plr)
+        if ModChecker(Plr) == true then
+            request({
+                Url = UR_L.."send",
+                Method = "POST",
+                Headers = { ["Content-Type"] = "application/json" },
+                Body = game:GetService("HttpService"):JSONEncode({
+                    command = "Mod Notifier",
+                    value = Plr.Name,
+                    discordId = _G.DiscordWhitelist[1]
+                })
+            })
+        end
+    end)
+end
 
 task.spawn(function()
     if _G.DiscordWhitelist ~= nil and _G.DiscordWhitelist[1] ~= nil and _G.DiscordWhitelist[1] ~= 'DiscordUserId' and _G.DiscordWhitelist[1] ~= '' then
@@ -1479,7 +1568,7 @@ task.spawn(function()
 
                 local data = HttpService:JSONDecode(res.Body)
 
-                if data.hasMessage --[[ and data.timestamp ~= lastTimestamp]] then
+                if data.hasMessage and data.command ~= 'Mod Notifier' --[[ and data.timestamp ~= lastTimestamp]] then
                     --lastTimestamp = data.timestamp
                     if table.find(_G.DiscordWhitelist, data.command) then
                         if firstMessage == true then
@@ -1697,7 +1786,10 @@ task.spawn(function()
 
             HRP.AssemblyLinearVelocity = Vector3.zero
             HRP.AssemblyAngularVelocity = Vector3.zero
-            sethiddenproperty(HRP, "PhysicsRepRootPart", MasterHRP)
+            pcall(function()
+                sethiddenproperty(HRP, "PhysicsRepRootPart", MasterHRP)
+                return
+            end)
             HRP.CFrame = MasterHRP.CFrame * Offset
         end
     end)
@@ -1725,7 +1817,11 @@ task.spawn(function()
         if _G.Exit == true then return end
 	    if Player.Character ~= nil and CheckKnocked(Player.Character) == true and CD == false then
 		    CD = true
-		    replicatesignal(Player.Kill)
+		    pcall(function()
+                Player.Character.Head:Destroy()
+                replicatesignal(Player.Kill)
+                return
+            end)
 		    task.wait(5)
 		    CD = false
 	    end
