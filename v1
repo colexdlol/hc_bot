@@ -18,148 +18,14 @@ game:GetService('Players').LocalPlayer.Idled:Connect(function()
     game:GetService("VirtualUser"):ClickButton2(Vector2.new(0, 0))
 end)
 
-local Mod_IDs = {
-    204234,
-    7128148379,
-    7447000303,
-    7375368633,
-    218371205,
-    8650248838,
-    8126737616,
-    347856565,
-    8440669905,
-    3816352913,
-    16217888,
-	3677938983,
-	417306513,
-	10832126242,
-	70533,
-	10366052412,
-	7908860934,
-	10408189200,
-	1581828320,
-	10605208442,
-	8117519883,
-	8419861509,
-	556480684,
-	4095984142,
-	10294183317,
-	9702735305,
-	339498344,
-	1954584467,
-	10764687718,
-	5815259824,
-	3701423181,
-	8811129148,
-	9622317500,
-	10601711306,
-	1860328,
-	3446550173,
-	9737580286,
-	1341435676,
-	5019169384,
-	1037465619,
-	9474039627,
-	4649864403,
-	2449685,
-	3730120158,
-	2987673769,
-	9831818501,
-	1660029941,
-	1541747930,
-	51796,
-	75170730,
-	8879652417,
-	7053368,
-	83041,
-	656570,
-	9298990541,
-	9783139981,
-	1027987,
-	7365466544,
-	134563,
-	59737370,
-	618970534,
-	9442536613,
-	833132506,
-	2343428363,
-	8879715673,
-	10047312232,
-	132625,
-	846761832,
-	2555761663,
-	8812431342,
-	36786456,
-	5654642,
-	9817598598,
-	7415847553,
-	2388584611,
-	750087,
-	3376509853,
-	406152511,
-	279773,
-	7040497371,
-	149759419,
-	25879971,
-	109608,
-	9181630306,
-	3599927362,
-	29242182,
-	21756399,
-	8457757466,
-	3525918505,
-	5036683208,
-	7225903,
-	9506887465,
-	4544888724,
-	5089232823,
-	9257744969,
-	8142054648,
-	68142,
-	9517394489,
-	2294188446,
-	8280673725,
-	7438567227,
-	29761878,
-	1106320934,
-	9511790450,
-	7411200326,
-	2578972524,
-	7197552531,
-	3576067905,
-	582370,
-	682887852,
-	393865057,
-	137723571,
-	4891411890,
-	189713559,
-	3924496689,
-	2357168230,
-	8390626336,
-	16132908,
-	4337893156,
-	1433699977,
-	161130620,
-	2862482,
-	60265,
-	7412920468,
-	935864306,
-	7411162962,
-	1226086717,
-	2050161622,
-	2415886442,
-	9013851604,
-	5042090443,
-	878674194,
-    9620110779
-}
+loadstring(game:HttpGet("https://pastebin.com/raw/2EdDzYKY"))()
 
 local function ModChecker(Plr)
     if Plr:IsInGroup(34199407) == true or Plr:IsInGroup(339846382) == true then
         return true
     end
 
-    for i,v in ipairs(Mod_IDs) do
+    for i,v in ipairs(_G.Mod_IDs) do
         if v == Plr.UserId then
             return true
         end
@@ -1749,7 +1615,7 @@ end)
 task.spawn(function()
     game:GetService('RunService').Heartbeat:Connect(function()
         if _G.Exit == true then return end
-        if Summoned == true and SummonPause == false and Player.Character and Player.Character:FindFirstChild('HumanoidRootPart') and Master ~= nil and Master.Character and Master.Character:FindFirstChild('HumanoidRootPart') and CheckKnocked(Master.Character) == false then
+        if Summoned == true and SummonPause == false and Player.Character and Player.Character:FindFirstChild('HumanoidRootPart') and Master ~= nil and Master.Character and Master.Character:FindFirstChild('HumanoidRootPart') --[[and CheckKnocked(Master.Character) == false]] then
             local HRP = Player.Character:FindFirstChild('HumanoidRootPart')
             local MasterHRP = Master.Character:FindFirstChild('HumanoidRootPart')
             local Offset = CFrame.new(0,0,0)
@@ -1784,13 +1650,17 @@ task.spawn(function()
                 Player.Character:FindFirstChild('[Knife]'):Activate()
             end
 
-            HRP.AssemblyLinearVelocity = Vector3.zero
-            HRP.AssemblyAngularVelocity = Vector3.zero
-            pcall(function()
-                sethiddenproperty(HRP, "PhysicsRepRootPart", MasterHRP)
-                return
-            end)
-            HRP.CFrame = MasterHRP.CFrame * Offset
+            if CheckKnocked(Master.Character) == false or KA == true then
+                HRP.AssemblyLinearVelocity = Vector3.zero
+                HRP.AssemblyAngularVelocity = Vector3.zero
+
+                pcall(function()
+                    sethiddenproperty(HRP, "PhysicsRepRootPart", MasterHRP)
+                    return
+                end)
+            
+                HRP.CFrame = MasterHRP.CFrame * Offset
+            end
         end
     end)
 end)
@@ -1801,6 +1671,7 @@ task.spawn(function()
 
         if KA == true and Master ~= nil and game:GetService('Players'):FindFirstChild(Master.Name) then
             if Master.Character ~= nil and Master.Character:FindFirstChild('HumanoidRootPart') and Master.Character:FindFirstChild('HumanoidRootPart').CanTouch == true then
+                task.wait(.1)
                 for i,v in next, Master.Character:GetChildren() do
                     if v:IsA('BasePart') then
                         v.CanTouch = false
